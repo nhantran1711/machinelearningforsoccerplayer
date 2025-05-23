@@ -15,4 +15,32 @@ url = BASE_URL + "competitions/CL/matches"
 response = requests.get(url, headers = headers)
 data = response.json()
 
-print(data)
+matches = data["matches"]
+# print(matches)
+
+# Extract relevant fields into the list
+match_list = []
+for match in matches:
+    home_team = match["homeTeam"]["name"]
+    away_team = match["awayTeam"]["name"]
+    home_goals = match["score"]["fullTime"]["home"]
+    away_goals = match["score"]["fullTime"]["away"]
+    winner = match["score"]["winner"]
+    winner_name = "draw"
+    
+    # Winner of the match
+    if (winner == "HOME_TEAM"): 
+        winner_name = home_team
+    elif (winner == "AWAY_TEAM"):
+        winner_name = away_team
+
+    match_list.append({
+        'home_team': home_team,
+        'away_team': away_team,
+        'home_goals': home_goals,
+        'away_goals': away_goals,
+        'winner': winner_name
+    })
+
+df = pd.DataFrame(match_list)
+print(df.head())
